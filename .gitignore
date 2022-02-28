@@ -1,6 +1,4 @@
+/node_modules/
+/public/build/
+
 .DS_Store
-npm-debug.log
-node_modules/
-coverage/
-dist/
-storybook-static/
