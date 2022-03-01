@@ -1,6 +1,7 @@
 <script>
   import { Meta, Template, Story } from "@storybook/addon-svelte-csf";
   import HeartSwitch from "./HeartSwitch.svelte";
+
 </script>
 
 <Meta
@@ -13,7 +14,7 @@
     // primary: { control: "boolean" },
     size: {
       control: { type: 'select' },
-      options: ['small', 'medium', 'large'],
+      options: ['sm', 'md', 'lg'],
     },
   }}
 />
@@ -25,6 +26,30 @@
 <Story
   name="Primary"
   args={{
+    size: 'lg',
+    onChange: () => console.log('Toggled')
+  }}
+/>
 
+<Story
+  name="Default"
+  args={{
+    onChange: () => console.log('Toggled'),
+  }}
+/>
+
+<Story
+  name="Checked"
+  args={{
+    onChange: () => console.log('Toggled'),
+    checked: true,
+  }}
+/>
+
+<Story
+  name="Disabled"
+  args={{
+    onChange: () => console.log('Toggled'),
+    disabled: true,
   }}
 />

@@ -1,5 +1,14 @@
 <script>
-	export let size = 'small' || 'medium' || 'large'
+	// PROPS
+
+	// Common & Required
+	export let title = 'Checkbox'
+	export let checked = false
+	export let disabled = false
+	export let onChange = () => {}
+	export let size = 'sm' || 'md' || 'lg'
+
+	// Customzation
 	export let inactiveTrackFillColor = '#ffffff'
 	export let inactiveTrackStrokeColor = '#d1d1d1'
 	export let activeTrackFillColor = '#ff708f'
@@ -14,23 +23,34 @@
 	export let invalidThumbColor = '#ffffff'
 	export let thumbShadowColor = 'rgb(23 23 23 / 0.25)'
 	export let thumbFocusRingColor = 'rgb(59 130 246 / 0.5)'
-	const TOGGLE_ANIMATION_DURATION = 350
-	export let title
+	export let animationDuration = 350
 
+	// FUNCTIONS
 	function sizeToScale() {
 		switch (size) {
-			case 'small':
+			case 'sm':
 				return 1
-			case 'medium':
+			case 'md':
 				return 1.5
-			case 'large':
+			case 'lg':
 				return 2
 		}
 	}
 
-    let  scale = sizeToScale()
-	let disabled = false
-	let checked = false
+	function handleOnChange() { 
+		initialState = false
+		onChange()
+	}
+
+	// VARIABLES
+	const initialChecked = checked
+	let initialState = true
+	let scale = sizeToScale() || 1
+
+	// $: console.log(`initialState = ${initialState}`)
+	// $: console.log(`initialChecked = ${initialChecked}`)
+	// $: console.log(`checked = ${checked}`)
+
 </script>
 
 <span
@@ -50,11 +70,15 @@
     --thumbShadowColor: {thumbShadowColor};
     --thumbFocusRingColor: {thumbFocusRingColor};
     --scale: {scale};
-    --TOGGLE_ANIMATION_DURATION: {TOGGLE_ANIMATION_DURATION};
+    --animationDuration: {animationDuration}ms;
     "
 >
-	<label class:disabled class:checked on:click|preventDefault={() => checked = !checked} >
-		<input type="checkbox" role="switch" checked={checked} />
+	<label
+		class:disabled
+		class:checked
+		class:initialState
+	>
+		<input type="checkbox" role="switch" bind:checked {disabled} on:change={() => handleOnChange()} />
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 33 23"
@@ -79,7 +103,7 @@
 		}
 
 		50% {
-			transform: rotate(30deg) translateX(calc(9 * var(--scale)) px);
+			transform: rotate(30deg) translateX(calc(9px * var(--scale)));
 		}
 
 		100% {
@@ -88,13 +112,10 @@
 		}
 	}
 
-	@keyframes unckeck {
+	@keyframes uncheck {
 		0% {
-			transform: rotate(-30deg)
-				translateX(
-					calc(13.5px * var(--scale))
-						translateY(calc(8px * var(--scale)))
-				);
+			transform: rotate(-30deg) translateX(calc(13.5px * var(--scale)))
+				translateY(calc(8px * var(--scale)));
 		}
 
 		50% {
@@ -120,9 +141,9 @@
 
 	input {
 		position: absolute;
-		top: calc(1px * var(--size));
-		left: calc(1px * var(--size));
-		transition: border-width 50ms background-color 350ms;
+		top: calc(1px * var(--scale));
+		left: calc(1px * var(--scale));
+		transition: border-width 50ms background-color var(--animationDuration);
 		appearance: none;
 		margin: 0;
 		box-shadow: 0 0 calc(2px * var(--scale)) calc(1px * var(--scale))
@@ -134,12 +155,13 @@
 		height: calc(18px * var(--scale));
 		background-color: var(--inactiveThumbColor);
 		pointer-events: none;
+		animation-duration: var(--animationDuration);
 	}
 
-	svg {
+	input + svg {
 		display: block;
-		transition: fill var(--TOGGLE_ANIMATION_DURATION)ms,
-			stroke var(--TOGGLE_ANIMATION_DURATION)ms;
+		transition: fill var(--animationDuration),
+			stroke var(--animationDuration);
 		width: calc(36px * var(--scale));
 		height: calc(25px * var(--scale));
 		fill: var(--inactiveTrackFillColor);
@@ -155,25 +177,34 @@
 		background-color: var(--activeThumbColor);
 	}
 
+	input:checked + svg {
+		fill: var(--activeTrackFillColor);
+		stroke: var(--activeTrackStrokeColor);
+	}
+
 	input:not(:checked) {
 		animation-name: uncheck;
 		animation-timing-function: linear;
 		animation-fill-mode: backwards;
 	}
 
-	svg:focus {
+	input:focus {
 		border-width: calc(1px * var(--scale));
 	}
 
-	svg:focus:not(:focus-visible) {
+	input:focus:not(:focus-visible) {
 		border-width: 0;
 	}
 
-	svg:focus-visible {
+	input:focus-visible {
 		border-width: calc(1px * var(--scale));
 	}
 
-	svg:invalid {
+	input:invalid {
 		background-color: var(--invalidThumbColor);
+	}
+
+	label.initialState > input, .initialState > svg {
+		animation-duration: 0ms !important;
 	}
 </style>
